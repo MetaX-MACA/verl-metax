@@ -1,0 +1,31 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install lightweight test dependencies
+        run: python -m pip install packaging ruff
+      - name: Lint
+        run: ruff check verl_metax tests tools/verify_workarounds.py
+      - name: Unit tests
+        env:
+          PYTHONPATH: .
+          PYTHONDONTWRITEBYTECODE: "1"
+        run: python -m unittest discover -s tests -v

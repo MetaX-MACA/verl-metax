@@ -1,0 +1,23 @@
+# verl-metax
+
+Copyright 2026 MetaX Integrated Circuits (Shanghai) Co., Ltd.
+
+This product includes code adapted from the Apache-2.0 licensed
+verl-hardware-plugin project:
+
+  https://github.com/verl-project/verl-hardware-plugin
+
+In particular, verl_metax/platform.py is adapted from:
+
+  verl_hardware_plugin/platforms/platform_cuda_metax.py
+
+Copyright (c) 2026 BAAI. All rights reserved.
+
+This product also uses extension interfaces provided by the Apache-2.0
+licensed verl project:
+
+  https://github.com/verl-project/verl
+
+The versioned sleep-mode compatibility files under
+patches/vllm_metax_0_23_0 include Apache-2.0 licensed code from vLLM and
+vllm-metax. Copyright and SPDX notices are retained in those files.

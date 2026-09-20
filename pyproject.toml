@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "verl-metax"
+description = "MetaX hardware plugin for verl"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = "Apache-2.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{ name = "MetaX Team" }]
+dynamic = ["version"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+  "packaging>=24.0",
+  "verl==0.9.0",
+  "mcpy",
+]
+
+[project.optional-dependencies]
+observability = ["prometheus-client>=0.20"]
+
+[project.urls]
+Homepage = "https://github.com/MetaX-MACA/verl-metax"
+Repository = "https://github.com/MetaX-MACA/verl-metax"
+Issues = "https://github.com/MetaX-MACA/verl-metax/issues"
+
+[project.entry-points."verl.plugins"]
+metax = "verl_metax.plugin"
+
+[project.scripts]
+verl-metax-info = "verl_metax.diagnostics:main"
+verl-metax-metrics = "verl_metax.observability.exporter:main"
+verl-metax-ppo = "verl_metax.launcher:main"
+verl-metax-run = "verl_metax.launcher:run_module_main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["verl_metax*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "verl_metax.__version__" }
+
+[tool.setuptools.package-data]
+verl_metax = ["observability/assets/*.json"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "G", "I", "UP"]

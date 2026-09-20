@@ -1,0 +1,25 @@
+GPU#0 MXC550
+  Utilization
+    GPU : 67.5 %
+  Memory
+    vis_vram used : 1024 KB
+    vis_vram total : 65536 KB
+    vis_vram usage : 1.56 %
+  Chip Temperature
+    hotspot temperature : 54 C
+  Board Power
+    Way 0 : 80 W
+    Total : 245.5 W
+GPU#1 MXC550
+  Utilization
+    GPU : 88 %
+  Memory
+    vis_vram used : 2048 KB
+    vis_vram total : 65536 KB
+    vis_vram usage : 3.12 %
+  Chip Temperature
+    hotspot temperature : 61 C
+  Board Power
+    Way 0 : 90 W
+    Total : 270 W
+

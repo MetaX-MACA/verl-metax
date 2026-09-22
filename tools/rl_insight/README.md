@@ -65,6 +65,12 @@ python3 -m pip install "rl-insight==0.2.1" --no-deps
 python3 -m pip install "prometheus-client>=0.20"
 ```
 
+如果发行镜像已经预装这些依赖，可以跳过安装，但应先确认版本和导入正常：
+
+```bash
+python3 -c "import importlib.metadata as m; print(m.version('rl-insight')); import prometheus_client"
+```
+
 #### 准备 RL-Insight Server 组件（离线环境可选）
 
 RL-Insight Server 运行需要 Prometheus、Tempo 和 Grafana。

@@ -49,7 +49,7 @@ nohup /usr/bin/prometheus-node-exporter \
   --web.listen-address=:9100 \
   >/tmp/node_exporter.log 2>&1 &
 
-# MetaX GPU exporter：在 verl 仓库根目录执行
+# MetaX GPU exporter：在 verl-metax 仓库根目录执行
 ss -lntp | grep ":9101"
 # 未监听时再启动：
 nohup python3 tools/rl_insight/metax_metrics_exporter.py \

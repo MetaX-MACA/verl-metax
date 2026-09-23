@@ -49,7 +49,7 @@ where = ["."]
 include = ["verl_metax*"]
 
 [tool.setuptools.dynamic]
-version = { attr = "verl_metax.__version__" }
+version = { attr = "verl_metax._build_version.BUILD_VERSION" }
 
 [tool.setuptools.package-data]
 verl_metax = ["observability/assets/*.json"]

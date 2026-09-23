@@ -3,6 +3,14 @@
 
 """MetaX hardware integration for verl."""
 
-__version__ = "0.9.0"
+from importlib import metadata
+
+from verl_metax._build_version import BASE_VERSION
+
+try:
+    __version__ = metadata.version("verl-metax")
+except metadata.PackageNotFoundError:
+    # Source checkouts have no distribution metadata until they are installed.
+    __version__ = BASE_VERSION
 
 __all__ = ["__version__"]

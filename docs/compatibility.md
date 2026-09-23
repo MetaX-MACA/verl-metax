@@ -39,6 +39,18 @@ the compatibility boundary visible in package listings and deployment logs:
 MACA, torch, vllm-metax, and other stack versions remain in this compatibility
 matrix instead of being encoded into the verl-metax package version.
 
+Internal image builds may append the MACA AI stack version as a PEP 440 local
+version identifier without changing the verl compatibility boundary. For
+example:
+
+```bash
+MACA_AI_VERSION=3.8.0.5 python -m build --wheel .
+```
+
+This produces `verl-metax==0.9.0+maca3.8.0.5`; its base version remains
+`0.9.0`. Builds that do not set `MACA_AI_VERSION` remain `0.9.0`. Local version
+identifiers are intended for internal wheels rather than the public release.
+
 ## NumPy policy
 
 NumPy `<2` has been validated in the MetaX environment with the exact stack in

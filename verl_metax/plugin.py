@@ -12,6 +12,7 @@ from verl.plugin.platform.platform_manager import PlatformRegistry
 
 from verl_metax.compat import check_verl_compatibility
 from verl_metax.platform import PlatformMetaX
+from verl_metax.sleep_mode_patch import activate as activate_sleep_mode_patch
 
 logger = logging.getLogger(__name__)
 _registered = False
@@ -28,6 +29,8 @@ def register() -> type[PlatformMetaX]:
     # partially compatible platform from being registered under another verl
     # release when entry-point auto-discovery is enabled.
     check_verl_compatibility(strict=True)
+    sleep_patch = activate_sleep_mode_patch()
+    logger.info("vllm-metax sleep-mode patch: %s", sleep_patch.reason)
 
     existing = PlatformRegistry.get("metax")
     if existing is not None and existing is not PlatformMetaX:

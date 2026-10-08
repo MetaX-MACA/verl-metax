@@ -206,6 +206,7 @@ class WorkaroundTests(unittest.TestCase):
             runtime_env={
                 "env_vars": {
                     "EXISTING": "1",
+                    "VERL_METAX_SLEEP_PATCH": "auto",
                     "VERL_METAX_WORKAROUNDS": "device-flops,numa-affinity",
                 },
                 "working_dir": "/workspace",

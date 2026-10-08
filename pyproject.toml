@@ -43,6 +43,8 @@ verl-metax-info = "verl_metax.diagnostics:main"
 verl-metax-metrics = "verl_metax.observability.exporter:main"
 verl-metax-ppo = "verl_metax.launcher:main"
 verl-metax-run = "verl_metax.launcher:run_module_main"
+verl-metax-sleep-patch-info = "verl_metax.sleep_mode_patch:main"
+verl-metax-verify-sleep-patch = "verl_metax.sleep_mode_patch._verify:main"
 
 [tool.setuptools.packages.find]
 where = ["."]

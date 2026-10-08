@@ -52,8 +52,9 @@ RL_INSIGHT_SERVER_URL=http://monitor-host:18080 \
 bash examples/grpo/qwen2_5_7b_muon_megatron.sh
 ```
 
-该脚本会自动加载 vllm-metax 0.23.0 sleep-mode replacement。其激活、验证、
-多机启动顺序和移除条件统一维护在
+安装后的 verl-metax 插件会针对 vllm-metax 0.23.0 自动加载版本化的
+sleep-mode replacement，不再需要脚本设置 `PYTHONPATH`。其激活、验证、
+多机行为和移除条件统一维护在
 [`examples/env/README.md`](../examples/env/README.md#vllm-metax-0230-sleep-mode)。
 
 RL-Insight 的部署与指标说明见

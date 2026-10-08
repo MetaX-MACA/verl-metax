@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples"
 HOW_TO_RUN = ROOT / "docs" / "how-to-run"
 RL_INSIGHT_RECIPE = ROOT / "tools" / "rl_insight" / "train_deepseek_r1_qwen_32b_2nodes.sh"
-VLLM_METAX_PATCH = ROOT / "patches" / "vllm_metax_0_23_0"
+VLLM_METAX_PATCH = ROOT / "verl_metax" / "sleep_mode_patch" / "_vllm_metax_0_23_0"
 
 
 class RecipeTests(unittest.TestCase):
@@ -33,25 +33,25 @@ class RecipeTests(unittest.TestCase):
 
     def test_sleep_mode_recipe_loads_complete_vllm_metax_replacement(self):
         expected = (
-            VLLM_METAX_PATCH / "sitecustomize.py",
-            VLLM_METAX_PATCH / "vllm_metax" / "platform.py",
-            VLLM_METAX_PATCH / "vllm_metax" / "device_allocator" / "cumem.py",
-            VLLM_METAX_PATCH / "vllm_metax" / "patch" / "plugin_enhancement" / "device_allocator.py",
+            VLLM_METAX_PATCH.parent / "sitecustomize.py",
+            VLLM_METAX_PATCH / "platform.py",
+            VLLM_METAX_PATCH / "device_allocator" / "cumem.py",
+            VLLM_METAX_PATCH / "patch" / "plugin_enhancement" / "device_allocator.py",
         )
         for path in expected:
             with self.subTest(path=path.relative_to(ROOT)):
                 self.assertTrue(path.is_file())
 
-        helper = (EXAMPLES / "env" / "vllm-metax-0.23-sleep-mode.sh").read_text(encoding="utf-8")
         muon = (EXAMPLES / "grpo" / "qwen2_5_7b_muon_megatron.sh").read_text(encoding="utf-8")
-        self.assertIn("patches/vllm_metax_0_23_0", helper)
-        self.assertIn('PYTHONPATH="${VLLM_METAX_PATCH_DIR}:', helper)
-        self.assertIn('source "${SCRIPT_DIR}/../env/vllm-metax-0.23-sleep-mode.sh"', muon)
+        self.assertFalse((EXAMPLES / "env" / "vllm-metax-0.23-sleep-mode.sh").exists())
+        self.assertNotIn("vllm-metax-0.23-sleep-mode.sh", muon)
+        self.assertIn("enable_sleep_mode=True", muon)
 
     def test_sleep_mode_instructions_are_centralized(self):
         guide = (EXAMPLES / "env" / "README.md").read_text(encoding="utf-8")
         self.assertIn("## vllm-metax 0.23.0 sleep mode", guide)
-        self.assertIn("source examples/env/vllm-metax-0.23-sleep-mode.sh", guide)
+        self.assertIn("VERL_METAX_SLEEP_PATCH", guide)
+        self.assertNotIn("source examples/env/vllm-metax-0.23-sleep-mode.sh", guide)
 
         for path in HOW_TO_RUN.glob("*.md"):
             with self.subTest(path=path.relative_to(ROOT)):

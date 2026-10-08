@@ -26,9 +26,13 @@ class PluginTests(unittest.TestCase):
     def test_initial_registration_checks_exact_verl_version(self):
         self.plugin._registered = False
         try:
-            with mock.patch("verl_metax.plugin.check_verl_compatibility") as check:
+            with (
+                mock.patch("verl_metax.plugin.check_verl_compatibility") as check,
+                mock.patch("verl_metax.plugin.activate_sleep_mode_patch") as activate,
+            ):
                 self.plugin.register()
             check.assert_called_once_with(strict=True)
+            activate.assert_called_once_with()
         finally:
             self.plugin._registered = True
 

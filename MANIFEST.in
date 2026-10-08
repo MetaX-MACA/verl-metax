@@ -3,5 +3,4 @@ recursive-include constraints *.txt
 recursive-include docs *.md
 recursive-include examples *.md *.sh
 recursive-include tools *.json *.md *.py *.sh
-recursive-include patches *.md *.py
 recursive-include tests/fixtures *.txt

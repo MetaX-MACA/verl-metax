@@ -99,7 +99,7 @@ real behavior to override.
 | `examples/env/` | Shared MetaX/Megatron launch environment and the authoritative sleep-mode guide |
 | `docs/how-to-run/` | Full scenario runbooks, including multi-node startup procedures |
 | `tools/rl_insight/` | Self-contained RL-Insight deployment, monitoring assets and training example |
-| `patches/` | Explicitly enabled, third-party-version-specific replacement files |
+| `verl_metax/sleep_mode_patch/` | Packaged, version-gated vllm-metax replacement files |
 
 New users normally need only the compatibility contract, the relevant recipe,
 and its how-to-run document. Maintainers should additionally read the
@@ -116,8 +116,8 @@ binds `run_headless` before vLLM plugin discovery can update the implementation,
 so the workaround resolves the live function at call time.
 
 The validated MetaX image may contain a `vllm-metax` 0.23.0 sleep-mode defect.
-Recipes that enable sleep mode load a versioned full-file replacement bundle
-before Python starts. See the
+The installed plugin automatically loads a version-gated full-file replacement
+bundle for that exact release and propagates it to child processes. See the
 [sleep-mode guide](examples/env/README.md#vllm-metax-0230-sleep-mode). This is
 separate from the `vllm-run-headless` verl workaround.
 

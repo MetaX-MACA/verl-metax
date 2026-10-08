@@ -3,7 +3,6 @@
 set -euo pipefail
 
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-source "${SCRIPT_DIR}/../env/vllm-metax-0.23-sleep-mode.sh"
 
 export MODEL_PATH="${MODEL_PATH:-/metax0402/metax0402/models/Qwen/Qwen2.5-7B-Instruct}"
 export TRAIN_FILES="${TRAIN_FILES:-/metax0402/datasets/verl/gsm8k/train.parquet}"

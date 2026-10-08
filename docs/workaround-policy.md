@@ -21,20 +21,23 @@ The supported compatibility mechanisms are:
 | MXSML UUID and NUMA implementation | MetaX platform/integration |
 | Generic UUID/NUMA call sites | upstream verl |
 | Stale vLLM `run_headless` binding | versioned workaround until verl resolves it dynamically |
-| vLLM 0.23 sleep-mode defects | versioned full-file replacement loaded before Python starts |
+| vLLM 0.23 sleep-mode defects | packaged, version-gated full-file replacement |
 | ASM environment toggles | versioned workaround until an engine hook exists |
 | Triton tile-size change | versioned, benchmark-backed workaround |
 | DataLoader worker cleanup | versioned workaround until verl exposes and invokes a trainer close lifecycle |
 | Hydra package search paths | upstream verl |
 
-The sleep-mode replacement is not a verl monkey patch. The helper at
-`examples/env/vllm-metax-0.23-sleep-mode.sh` prepends the versioned patch
-directory to `PYTHONPATH`; its `sitecustomize.py` then replaces exactly three
-`vllm_metax` Python modules while leaving the installed package intact. See
-the [shared environment guide](../examples/env/README.md#vllm-metax-0230-sleep-mode)
-for activation and verification, and
-[`patches/vllm_metax_0_23_0/README.md`](../patches/vllm_metax_0_23_0/README.md)
-for implementation ownership.
+The sleep-mode replacement is not a verl monkey patch. It is packaged under
+`verl_metax.sleep_mode_patch` and redirects exactly three `vllm_metax` Python
+modules while leaving the installed package intact. The plugin activates it
+automatically only for the validated vllm-metax 0.23.0 release. The finder is
+installed before those modules are imported, and its package directory is
+prepended to child-process `PYTHONPATH` so `sitecustomize.py` can activate the
+same redirect in spawned interpreters. `VERL_METAX_SLEEP_PATCH=on|off|auto`
+provides strict enablement, disablement, and the default version-gated mode.
+See the
+[shared environment guide](../examples/env/README.md#vllm-metax-0230-sleep-mode)
+for activation and verification.
 
 ## DataLoader worker cleanup
 
@@ -60,20 +63,22 @@ untouched and does not wrap the task runner.
 `VERL_METAX_WORKAROUNDS=all` (the default) applies the verl 0.9.0 compatibility
 set. `default` is an alias for `all`, a comma-separated identifier list selects
 individual workarounds, and `none` disables every verl workaround. This setting
-does not control the separate vllm-metax sleep-mode replacement.
+does not control the separate vllm-metax sleep-mode replacement; use
+`VERL_METAX_SLEEP_PATCH` for that package.
 
 ## Ray worker propagation
 
 Most verl training code executes in fresh Ray worker processes. Patching a
 module only in the launcher process does not change a module imported by those
 workers. The launcher therefore injects `verl_metax.worker_setup.setup` through
-Ray's `worker_process_setup_hook`. The setup hook installs a standard-library-
-only import hook; it deliberately does not import verl, torch, vLLM, or Triton,
-because doing so before Ray applies actor-specific device visibility can bind
-multiple ranks to the same physical accelerator. Each process-local workaround
-is applied lazily after its target module is imported in the assigned actor.
-The selected `VERL_METAX_WORKAROUNDS` value is forwarded in the job runtime
-environment.
+Ray's `worker_process_setup_hook`. The setup hook installs the lazy verl
+workaround finder and the version-gated sleep-mode redirector; it deliberately
+does not import verl, torch, vLLM, or Triton, because doing so before Ray applies
+actor-specific device visibility can bind multiple ranks to the same physical
+accelerator. Each process-local workaround is applied lazily after its target
+module is imported in the assigned actor. The selected
+`VERL_METAX_WORKAROUNDS` and `VERL_METAX_SLEEP_PATCH` values are forwarded in
+the job runtime environment.
 
 An explicitly configured third-party `worker_process_setup_hook` currently
 conflicts with this bootstrap and produces an error instead of silently losing

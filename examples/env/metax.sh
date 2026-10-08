@@ -31,9 +31,8 @@ unset MHA_BWD_NO_ATOMIC_F64
 # server actors that need full visibility set this flag in their own runtime_env.
 unset RAY_EXPERIMENTAL_NOSET_CUDA_VISIBLE_DEVICES
 
-# For recipes that explicitly enable vLLM sleep mode, load the versioned
-# vllm-metax replacement modules before starting Python:
-# source examples/env/vllm-metax-0.23-sleep-mode.sh
+# verl-metax automatically activates its version-gated vllm-metax sleep-mode
+# compatibility package. Set VERL_METAX_SLEEP_PATCH=off to disable it.
 
 # Configure these at the deployment layer when needed:
 # export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7

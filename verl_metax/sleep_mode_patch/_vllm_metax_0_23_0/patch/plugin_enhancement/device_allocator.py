@@ -31,4 +31,3 @@ except ImportError:
     pass
 
 vllm.device_allocator.get_mem_allocator_instance = get_mem_allocator_instance
-

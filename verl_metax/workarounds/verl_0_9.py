@@ -20,6 +20,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from verl_metax.platform import DEVICE_FLOPS
+from verl_metax.sleep_mode_patch import PATCH_MODE_ENV
 
 logger = logging.getLogger(__name__)
 
@@ -245,6 +246,7 @@ def patch_ray_worker_setup(selection: str) -> bool:
 
         env_vars = dict(runtime_env.get("env_vars") or {})
         env_vars["VERL_METAX_WORKAROUNDS"] = selection
+        env_vars[PATCH_MODE_ENV] = os.getenv(PATCH_MODE_ENV, "auto")
         runtime_env["env_vars"] = env_vars
         runtime_env["worker_process_setup_hook"] = RAY_WORKER_SETUP_HOOK
         kwargs["runtime_env"] = runtime_env

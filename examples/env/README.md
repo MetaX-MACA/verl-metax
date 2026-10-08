@@ -28,38 +28,49 @@ the development checkout documented in
 ## vllm-metax 0.23.0 sleep mode
 
 The validated image's installed vllm-metax 0.23.0 may contain defects in its
-sleep-mode allocator and platform integration. `vllm-metax-0.23-sleep-mode.sh`
-enables a versioned replacement for exactly three modules without modifying
-the installed environment on disk.
+sleep-mode allocator and platform integration. The verl-metax wheel contains
+a versioned replacement for exactly three modules without modifying the
+installed vllm-metax package on disk. Importing verl loads the MetaX plugin and
+activates the replacement automatically only for `vllm-metax==0.23.0`.
 
-Enable it before starting Python or Ray:
-
-```bash
-source examples/env/vllm-metax-0.23-sleep-mode.sh
-bash examples/grpo/qwen2_5_7b_muon_megatron.sh
-```
-
-The Muon recipe already sources the helper. For another recipe, source the
-helper and enable the corresponding rollout option:
+Enable sleep mode in the recipe; no `PYTHONPATH` or helper script is required:
 
 ```bash
-source examples/env/vllm-metax-0.23-sleep-mode.sh
 bash examples/grpo/qwen2_5_7b_megatron.sh \
   +actor_rollout_ref.rollout.enable_sleep_mode=True
 ```
 
-If the repository is mounted at a different path on worker nodes, the patch
-tree must be available at the same path on every node:
+Activation is controlled by `VERL_METAX_SLEEP_PATCH`:
+
+- `auto` (default): activate only for the validated vllm-metax 0.23.0 stack;
+- `on`: require the validated version and fail if activation is unsafe;
+- `off`: use the installed vllm-metax package unchanged.
+
+Inspect the packaged redirects before training:
 
 ```bash
-export VLLM_METAX_PATCH_DIR=/opt/verl-metax/patches/vllm_metax_0_23_0
-source examples/env/vllm-metax-0.23-sleep-mode.sh
+verl-metax-sleep-patch-info
 ```
 
-Verify activation before training:
+Verify that the driver and a real Ray worker import all three packaged files:
+
+```bash
+ray stop --force
+unset RAY_ADDRESS
+VERL_METAX_SLEEP_PATCH=on verl-metax-verify-sleep-patch \
+  --address local --num-gpus 0
+```
+
+Use `--skip-ray` for a driver-only check. Strict `on` mode makes an unsupported
+vllm-metax version or late activation fail instead of silently skipping the
+replacement. For an already running multi-node cluster, use `--address auto`
+and add `--all-nodes`; install the same verl-metax wheel on every node first.
+
+Verify the files actually imported by the driver:
 
 ```bash
 python - <<'PY'
+import verl
 import vllm_metax.platform
 from vllm_metax.device_allocator import cumem
 
@@ -68,14 +79,10 @@ print(cumem.__file__)
 PY
 ```
 
-Both paths must point into `patches/vllm_metax_0_23_0`. The implementation and
-replacement file list are documented in
-[`patches/vllm_metax_0_23_0`](../../patches/vllm_metax_0_23_0/README.md).
-
-Do not enable this replacement for another vllm-metax version without comparing
-all three files and creating a separately versioned patch directory. Stop
-sourcing the helper when sleep mode is disabled or the installed vllm-metax
-release contains equivalent fixes.
+Both paths must point into
+`verl_metax/sleep_mode_patch/_vllm_metax_0_23_0`. For a later vllm-metax
+release, `auto` leaves the installed package unchanged until that stack has
+been reviewed and assigned its own versioned replacement.
 
 ## Ray startup order
 
@@ -89,13 +96,13 @@ bash examples/grpo/qwen3_8b_fsdp.sh
 ```
 
 For a persistent or multi-node cluster, source the required environment before
-`ray start` on every node. Existing raylets and workers do not automatically
-inherit variables set later by the training driver.
+`ray start` on every node. The default `auto` mode is loaded by the installed
+plugin in each worker. If overriding `VERL_METAX_SLEEP_PATCH`, export the same
+value before starting Ray on every node.
 
 ```bash
 source examples/env/megatron.sh
-# If required by the recipe:
-source examples/env/vllm-metax-0.23-sleep-mode.sh
+export VERL_METAX_SLEEP_PATCH=auto
 ray start --head --port=1009 --num-gpus=8
 ```
 

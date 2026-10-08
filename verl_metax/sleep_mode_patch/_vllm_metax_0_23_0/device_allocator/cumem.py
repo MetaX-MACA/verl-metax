@@ -383,4 +383,3 @@ class CuMemAllocator:
             handle = data.handle
             sum_bytes += handle[1]
         return sum_bytes
-

@@ -19,5 +19,6 @@ licensed verl project:
   https://github.com/verl-project/verl
 
 The versioned sleep-mode compatibility files under
-patches/vllm_metax_0_23_0 include Apache-2.0 licensed code from vLLM and
-vllm-metax. Copyright and SPDX notices are retained in those files.
+verl_metax/sleep_mode_patch/_vllm_metax_0_23_0 include Apache-2.0 licensed
+code from vLLM and vllm-metax. Copyright and SPDX notices are retained in
+those files.

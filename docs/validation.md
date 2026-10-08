@@ -30,7 +30,7 @@ not release performance baselines.
 | `megatron-asm-scopes` | ASM Megatron actor forward/backward completes | Passed |
 | `entropy-kernel-tile` | Worker reports the MetaX tile and fused entropy training completes | Passed |
 | Ray worker propagation | `tools/verify_workarounds.py` observes process-local patches in a real worker | Passed |
-| vllm-metax 0.23.0 sleep-mode replacement | Replacement paths verified; single-node and two-node training complete | Passed |
+| vllm-metax 0.23.0 sleep-mode replacement | Packaged auto-activation passed single-node and two-node training | Passed |
 | `trtllm-device-uuid` | TensorRT-LLM is not installed in the validated stack | Not applicable / not E2E tested |
 
 `trtllm-device-uuid` must not be described as hardware-validated until a
@@ -51,6 +51,21 @@ that process-local patches reach a real worker:
 ```bash
 python tools/verify_workarounds.py --address auto --num-gpus 1
 ```
+
+Verify the packaged sleep-mode files independently. This command fails unless
+both the driver and a real Ray worker import all three replacements from the
+installed verl-metax wheel:
+
+```bash
+ray stop --force
+unset RAY_ADDRESS
+VERL_METAX_SLEEP_PATCH=on verl-metax-verify-sleep-patch \
+  --address local --num-gpus 0
+```
+
+For a persistent multi-node cluster prepared with the same wheel and
+environment on every node, replace `--address local` with `--address auto` and
+add `--all-nodes`.
 
 For single-node recipes, do not pre-start Ray unless the cluster was started
 after sourcing the same MetaX environment. For multi-node recipes, source the

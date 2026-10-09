@@ -17,6 +17,7 @@ This product also uses extension interfaces provided by the Apache-2.0
 licensed verl project:
 
   https://github.com/verl-project/verl
+Copyright 2023-2024 Bytedance Ltd. and/or its affiliates
 
 The versioned sleep-mode compatibility files under
 verl_metax/sleep_mode_patch/_vllm_metax_0_23_0 include Apache-2.0 licensed
